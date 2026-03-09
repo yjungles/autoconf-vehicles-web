@@ -3,11 +3,11 @@ import { computed, ref } from 'vue'
 export type ThemeMode = 'light' | 'dark' | 'system'
 
 const STORAGE_KEY = 'theme-preference'
-const theme = ref<ThemeMode>('system')
+const theme = ref<ThemeMode>('light')
 let initialized = false
 
 function getSystemTheme(): 'light' | 'dark' {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return 'light'
 }
 
 function applyTheme(mode: ThemeMode) {
