@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6">
+  <div class="flex flex-col gap-6">
     <div class="space-y-3">
       <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
@@ -43,36 +43,34 @@
     </div>
 
     <div v-else class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      <Card v-for="image in images" :key="image.id" class="overflow-hidden py-0">
-        <div class="bg-muted aspect-4/3 overflow-hidden">
-          <img
-            :src="storageUrl(image.path)"
-            :alt="`Imagem ${image.id} do veículo`"
-            class="h-full w-full object-cover"
-          />
-        </div>
-
-        <CardContent class="space-y-4 p-4">
-          <div class="flex items-center justify-between gap-2">
-            <Badge :variant="image.is_cover ? 'default' : 'secondary'">
-              {{ image.is_cover ? 'Capa' : 'Imagem' }}
-            </Badge>
-
-            <span class="text-muted-foreground text-xs"> ID #{{ image.id }} </span>
+      <Card v-for="image in images" :key="image.id" class="overflow-hidden py-0 gap-0">
+        <CardContent class="p-0">
+          <div class="bg-muted aspect-4/3 overflow-hidden">
+            <img
+              :src="storageUrl(image.path)"
+              :alt="`Imagem ${image.id} do veículo`"
+              class="h-full w-full object-cover"
+            />
           </div>
-
-          <div class="flex flex-col gap-2">
+        </CardContent>
+        <CardFooter class="p-4">
+          <div class="grid grid-cols-2 gap-2 m-0 w-full">
             <Button
+              class="w-full"
               variant="outline"
               :disabled="image.is_cover || setCoverMutation.isPending.value"
               @click="handleSetCover(image.id)"
             >
+              <GalleryThumbnails />
               {{ image.is_cover ? 'Imagem de capa' : 'Definir como capa' }}
             </Button>
 
             <Dialog>
               <DialogTrigger as-child>
-                <Button variant="destructive"> Excluir imagem </Button>
+                <Button variant="destructive" class="w-full">
+                  <Trash />
+                  Excluir imagem
+                </Button>
               </DialogTrigger>
 
               <DialogContent>
@@ -101,7 +99,7 @@
               </DialogContent>
             </Dialog>
           </div>
-        </CardContent>
+        </CardFooter>
       </Card>
     </div>
   </div>
@@ -111,9 +109,8 @@
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   Dialog,
   DialogClose,
@@ -129,6 +126,7 @@ import { getErrorMessage } from '@/lib/api/errors'
 import { useVehicleImages } from '../composables/useVehicleImages'
 import type { VehicleImage } from '../types/vehicle.types'
 import { storageUrl } from '@/utils/storage'
+import { Trash, GalleryThumbnails } from 'lucide-vue-next'
 
 const props = defineProps<{
   vehicleId: number | string
