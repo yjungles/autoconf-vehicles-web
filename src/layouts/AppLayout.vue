@@ -1,52 +1,27 @@
 <template>
   <div class="bg-muted/20 min-h-screen">
     <header
-      class="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-30 border-b backdrop-blur"
+      class="flex flex-col items-center justify-center w-full sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60"
     >
-      <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
-        <RouterLink to="/vehicles" class="flex items-center gap-3">
-          <div
-            class="bg-primary text-primary-foreground flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold"
-          >
-            AV
-          </div>
-          <div class="flex flex-col">
-            <span class="text-sm font-semibold">AutoConf Vehicles</span>
-            <span class="text-muted-foreground text-xs">Painel administrativo</span>
-          </div>
-        </RouterLink>
+      <div
+        class="flex flex-row items-center justify-between mx-auto w-full max-w-7xl min-h-16 px-6"
+      >
+        <AppBrand to="/vehicles" subtitle="Painel administrativo" />
 
-        <nav class="flex items-center gap-2">
-          <div class="ms-auto items-center gap-1 p-1 md:flex">
-            <Button
-              size="icon"
-              variant="outline"
-              @click="setTheme(theme === 'light' ? 'dark' : 'light')"
-              class="rounded-lg border"
-            >
-              <Sun v-if="theme === 'light'" class="size-4" />
-              <Moon v-else class="size-4" />
-            </Button>
-          </div>
-
-          <div class="hidden text-right md:block">
-            <p class="text-sm font-medium">
-              {{ user?.name || 'Usuário autenticado' }}
-            </p>
-            <p class="text-muted-foreground text-xs">
-              {{ user?.email || 'Sessão ativa' }}
-            </p>
-          </div>
-
-          <Button variant="outline" :disabled="isLoggingOut" @click="handleLogout">
-            {{ isLoggingOut ? 'Saindo...' : 'Sair' }}
-          </Button>
-        </nav>
+        <NavUser
+          :user="user"
+          :theme="theme"
+          :is-logging-out="isLoggingOut"
+          @toggle-theme="toggleTheme"
+          @logout="onLogoutClick"
+        />
       </div>
     </header>
 
-    <main>
-      <RouterView />
+    <main class="mx-auto flex w-full justify-center px-4 py-6 md:px-6">
+      <div class="w-full max-w-7xl">
+        <RouterView />
+      </div>
     </main>
   </div>
 </template>
@@ -56,10 +31,10 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import { useTheme } from '@/app/composables/useTheme'
-import { Button } from '@/components/ui/button'
+import AppBrand from '@/components/shared/AppBrand.vue'
+import NavUser from '@/components/shared/NavUser.vue'
 import { useAuth } from '@/features/auth/composables/useAuth'
 import { getErrorMessage } from '@/lib/api/errors'
-import { Sun, Moon } from 'lucide-vue-next'
 
 const router = useRouter()
 const { user, signOut } = useAuth()
@@ -67,7 +42,11 @@ const { theme, setTheme } = useTheme()
 
 const isLoggingOut = ref(false)
 
-async function handleLogout() {
+function toggleTheme() {
+  setTheme(theme.value === 'light' ? 'dark' : 'light')
+}
+
+async function onLogoutClick() {
   try {
     isLoggingOut.value = true
     await signOut()
