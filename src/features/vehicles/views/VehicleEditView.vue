@@ -1,10 +1,8 @@
 <template>
-  <section class="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 md:p-6">
+  <section class="mx-auto flex w-full flex-col gap-6 p-4 md:p-6">
     <header class="space-y-1">
       <h1 class="text-3xl font-semibold tracking-tight">Editar veículo</h1>
-      <p class="text-muted-foreground text-sm">
-        Atualize as informações do veículo selecionado.
-      </p>
+      <p class="text-muted-foreground text-sm">Atualize as informações do veículo selecionado.</p>
     </header>
 
     <Alert v-if="vehicleError" variant="destructive">
@@ -24,13 +22,16 @@
       submit-label="Salvar alterações"
       submitting-label="Salvando..."
       :initial-values="{
+        placa: vehicle.placa,
+        chassi: vehicle.chassi,
         marca: vehicle.marca,
         modelo: vehicle.modelo,
-        placa: vehicle.placa,
-        ano: vehicle.ano ?? '',
-        km: vehicle.km,
+        versao: vehicle.versao ?? '',
         valor_venda: vehicle.valor_venda,
-        descricao: vehicle.descricao ?? '',
+        cor: vehicle.cor,
+        km: vehicle.km,
+        cambio: vehicle.cambio,
+        combustivel: vehicle.combustivel,
       }"
       :is-submitting="updateMutation.isPending.value"
       :api-error="submitError"
@@ -58,11 +59,7 @@ const queryClient = useQueryClient()
 const vehicleId = computed(() => String(route.params.id))
 const submitError = ref<unknown>(null)
 
-const {
-  data: vehicle,
-  isLoading,
-  error: vehicleError,
-} = useVehicle(vehicleId)
+const { vehicle, isLoading, error: vehicleError } = useVehicle(vehicleId)
 
 const vehicleErrorMessage = computed(() =>
   vehicleError.value
@@ -73,11 +70,11 @@ const vehicleErrorMessage = computed(() =>
 const updateMutation = useMutation({
   mutationFn: (payload: Parameters<typeof updateVehicle>[1]) =>
     updateVehicle(vehicleId.value, payload),
-  onSuccess: async (updatedVehicle) => {
+  onSuccess: async (response) => {
     await queryClient.invalidateQueries({ queryKey: ['vehicles'] })
     await queryClient.invalidateQueries({ queryKey: ['vehicle', vehicleId.value] })
     toast.success('Veículo atualizado com sucesso.')
-    await router.push(`/vehicles/${updatedVehicle.id}`)
+    await router.push(`/vehicles/${response.data.id}`)
   },
 })
 

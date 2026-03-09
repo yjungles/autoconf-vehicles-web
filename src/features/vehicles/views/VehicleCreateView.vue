@@ -1,5 +1,5 @@
 <template>
-  <section class="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 md:p-6">
+  <section class="mx-auto flex w-full flex-col gap-6 p-4 md:p-6">
     <header class="space-y-1">
       <h1 class="text-3xl font-semibold tracking-tight">Cadastrar veículo</h1>
       <p class="text-muted-foreground text-sm">
@@ -34,10 +34,10 @@ const submitError = ref<unknown>(null)
 
 const createMutation = useMutation({
   mutationFn: createVehicle,
-  onSuccess: async (vehicle) => {
+  onSuccess: async (response) => {
     await queryClient.invalidateQueries({ queryKey: ['vehicles'] })
     toast.success('Veículo cadastrado com sucesso.')
-    await router.push(`/vehicles/${vehicle.id}`)
+    await router.push(`/vehicles/${response.data.id}`)
   },
 })
 
