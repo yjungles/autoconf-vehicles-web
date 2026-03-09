@@ -1,6 +1,6 @@
 <template>
   <RouterView />
-  <Toaster rich-colors position="top-right" />
+  <Toaster rich-colors position="top-center" />
 </template>
 
 <script setup lang="ts">
