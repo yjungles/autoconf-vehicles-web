@@ -27,7 +27,7 @@ const forwarded = useForwardProps(delegatedProps)
   >
     <slot>
       <ChevronLeftIcon />
-      <span class="hidden sm:block">First</span>
+      <span class="hidden sm:block">Primeira</span>
     </slot>
   </PaginationFirst>
 </template>
