@@ -1,4 +1,5 @@
 import type { PaginatedResponse } from '@/lib/api/types.ts'
+import type { User } from '@/features/auth/types/auth.types.ts'
 
 export type VehicleImage = {
   id: number
@@ -12,27 +13,54 @@ export type VehicleImage = {
 export type VehicleAudit = {
   created_at?: string
   updated_at?: string
-  created_by?: {
-    id: number
-    name: string
-    email?: string
-  } | null
-  updated_by?: {
-    id: number
-    name: string
-    email?: string
-  } | null
+  created_by?: User | null
+  updated_by?: User | null
+}
+
+export type VehicleCambio = 'manual' | 'automatico'
+
+export type VehicleCombustivel =
+  | 'gasolina'
+  | 'alcool'
+  | 'flex'
+  | 'diesel'
+  | 'hibrido'
+  | 'eletrico'
+
+export const VEHICLE_CAMBIO_LABELS = {
+  manual: 'Manual',
+  automatico: 'Automático',
+} as const satisfies Record<VehicleCambio, string>
+
+export const VEHICLE_COMBUSTIVEL_LABELS = {
+  gasolina: 'Gasolina',
+  alcool: 'Álcool',
+  flex: 'Flex',
+  diesel: 'Diesel',
+  hibrido: 'Híbrido',
+  eletrico: 'Elétrico',
+} as const satisfies Record<VehicleCombustivel, string>
+
+export function getVehicleCambioLabel(value: VehicleCambio) {
+  return VEHICLE_CAMBIO_LABELS[value]
+}
+
+export function getVehicleCombustivelLabel(value: VehicleCombustivel) {
+  return VEHICLE_COMBUSTIVEL_LABELS[value]
 }
 
 export type Vehicle = {
   id: number
+  placa: string
+  chassi: string
   marca: string
   modelo: string
-  placa: string
-  ano?: number
-  km: number
+  versao?: string
   valor_venda: number
-  descricao?: string
+  cor: string
+  km: number
+  cambio: VehicleCambio
+  combustivel: VehicleCombustivel
   images?: VehicleImage[]
   created_at?: string
   updated_at?: string
@@ -40,14 +68,17 @@ export type Vehicle = {
   updated_by?: VehicleAudit['updated_by']
 }
 
+export type VehicleSortField = 'id' | 'km' | 'valor_venda'
+export type VehicleSortValue = VehicleSortField | `-${VehicleSortField}`
+
 export type VehicleFilters = {
   page?: number
+  per_page?: number
   q?: string
   marca?: string
   modelo?: string
   placa?: string
-  sort?: 'km' | 'valor_venda'
-  direction?: 'asc' | 'desc'
+  sort?: string
 }
 
 export type VehicleListResponse = PaginatedResponse<Vehicle>
